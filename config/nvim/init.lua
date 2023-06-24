@@ -1,0 +1,13 @@
+require('dom.options')
+require('dom.binds')
+require('dom.packer')
+require('dom.mason')
+require('dom.lsp')
+require('dom.telescope')
+require('dom.treesitter')
+require('dom.cmp')
+require('dom.luasnip')
+require('dom.dashboard')
+require('dom.themes.kanagawa')
+
+--require('dom.filetree')
