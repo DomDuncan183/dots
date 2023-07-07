@@ -1,34 +1,39 @@
+require('luasnip.loaders.from_vscode').lazy_load()
+require('nvim-autopairs').setup({
+    --ignored_next_char = "[%w%.]" -- will ignore alphanumeric and `.` symbol
+    fast_wrap = {}
+})
+
 local cmp = require('cmp')
-local luasnip = require('luasnip')
-local lspkind = require('lspkind')
 
 cmp.setup({
     snippet = {
         expand = function(args)
-            luasnip.lsp_expand(args.body)
+            require('luasnip').lsp_expand(args.body)
         end,
     },
     window = {
         -- completion = cmp.config.window.bordered(),
         -- documentation = cmp.config.window.bordered(),
     },
+    cmp.event:on(
+        'confirm_done',
+        require('nvim-autopairs.completion.cmp').on_confirm_done()
+    ),
     mapping = cmp.mapping.preset.insert({
-        ['<C-k>'] = cmp.mapping.select_prev_item(),
-        ['<C-j>'] = cmp.mapping.select_next_item(),
-        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-p>'] = cmp.mapping.select_prev_item(),
+        ['<C-n>'] = cmp.mapping.select_next_item(),
         ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.abort(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<C-y>'] = cmp.mapping.confirm({select = true}),
     }),
     sources = cmp.config.sources({
-        { name = 'nvim_lsp' },
-        { name = 'luasnip' },
-        { name = 'buffer' },
-        { name = 'path' },
+        {name = 'nvim_lsp'},
+        {name = 'luasnip'},
+        {name = 'buffer'},
+        {name = 'path'}
     }),
     formatting = {
-        format = lspkind.cmp_format({
+        format = require('lspkind').cmp_format({
             mode = 'symbol_text',
             menu = ({
                 buffer = '[Buffer]',
@@ -37,20 +42,16 @@ cmp.setup({
             })
         }),
     },
-
-    cmp.setup.cmdline({ '/', '?' }, {
+    cmp.setup.cmdline({'/', '?'}, {
         mapping = cmp.mapping.preset.cmdline(),
         sources = {
             { name = 'buffer' }
         }
     }),
-
-    -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
     cmp.setup.cmdline(':', {
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
-            { name = 'path' }
-        }, {
+            { name = 'path' },
             { name = 'cmdline' }
         })
     })

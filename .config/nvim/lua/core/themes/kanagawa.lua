@@ -17,6 +17,9 @@ require('kanagawa').setup({
             TelescopeBorder = { bg = theme.ui.bg_m1 },
             TelescopeNormal = { bg = theme.ui.bg_m1 },
 
+            HarpoonWindow = { bg = theme.ui.bg_m1 },
+            HarpoonBorder = { bg = theme.ui.bg_m1 },
+
             --[[
             TelescopeTitle = { fg = theme.ui.fg, bold = true },
             TelescopePromptNormal = { bg = theme.ui.bg_p1 },
