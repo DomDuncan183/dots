@@ -2,22 +2,17 @@ window:
   padding:
     x: 10
     y: 10
-  opacity: .98
+  opacity: .90
 
 font:
   normal: 
     family: NotoSansM NF
     style: regular
-  #bold:
-  # family: NotoSansM NF
-  # style: bold
 
 colors:
-  # Default colors
   primary:
     background: '0x000000'
     foreground: '0xffffff'
-  # Normal colors
   normal:
     black:   '0x000000'
     red:     '0xcd0000'
@@ -27,8 +22,6 @@ colors:
     magenta: '0xcd00cd'
     cyan:    '0x00cdcd'
     white:   '0xe5e5e5'
-
-  # Bright colors
   bright:
     black:   '0x7f7f7f'
     red:     '0xff0000'
