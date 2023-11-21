@@ -1,0 +1,65 @@
+* {
+    font-family: NotoSans NFP;
+    font-size: 14px;
+    min-height: 0;
+    transition: all .2s ease-in-out;
+}
+
+window#waybar {
+    background: #1c1c1c;
+    color: #cccccc;
+    border-radius: 0 0 10px 10px;
+}
+#workspaces button {
+    color: #cccccc;
+    border: none;
+    padding: 4px;
+    margin: 0 5px;
+}
+#workspaces button.persistent {
+    color: #262626;
+}
+#workspaces button.active {
+    color: #cccccc;
+}
+#workspaces button.persistent.active {
+    color: #cccccc;
+}
+
+#workspaces button:hover {
+    color: #9CCFD8;
+    border-radius: 15px;
+}
+
+#clock,
+#wireplumber,
+#window,
+#workspaces {
+    background: #363636;
+    border-radius: .7rem;
+    font-weight: 600;
+    margin: 4px 0;
+    padding: 0 10px;
+    /*transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682);*/
+}
+
+window#waybar.empty #window{
+    background: transparent;
+}
+
+#clock {
+    margin-right: 20px;
+}
+
+#wireplumber {
+    margin-right: 20px;
+}
+
+#wireplumber.muted {
+    color: #000000;
+    background: #b0b0b0;
+}
+
+#workspaces {
+    margin-left: 20px;
+}
