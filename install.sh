@@ -197,7 +197,7 @@ make_list() {
         pkg_list+=("brightnessctl" "tlp")
     fi
 
-    pkg_list+=( "zsh" "starship" "lf" "tmux" "neovim" "noto-fonts" \
+    pkg_list+=( "zsh" "starship" "eza" "lf" "tmux" "neovim" "noto-fonts" \
         "noto-fonts-cjk" "ttf-noto-nerd" "xdg-desktop-portal" \
         "xdg-desktop-portal-gtk" "flatpak")
 
