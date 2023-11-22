@@ -58,7 +58,7 @@ copy_configs() {
     local dirs=("lf" "xdg-desktop-portal" "wallpapers")
     case $wm in
         bspwm)
-            dirs+=("bspwm" "sxhkd" "alacritty" "polybar" "rofi" "feh" "flameshot")
+            dirs+=("bspwm" "sxhkd" "alacritty" "polybar" "rofi" "picom" "feh" "flameshot")
             ;;
         awesome)
             dirs+=("awesome" "alacritty" "rofi" "feh" "flameshot")
