@@ -3,8 +3,40 @@
 wm=
 laptop=
 server=
-nvidia=
-pkg_list=()
+
+## universal packages
+pkg_list=("zsh" "starship" "eza" "lf" "tmux" "neovim" "noto-fonts" \
+    "noto-fonts-cjk" "ttf-noto-nerd" "xdg-desktop-portal" \
+    "xdg-desktop-portal-gtk" "flatpak" "pipewire" \
+    "pipewire-pulse" "wireplumber" "man-db")
+
+## package names
+xorg=("xorg-xrandr" "xclip" "flameshot")
+wayland=("wl-clipboard" "grim" "slurp")
+
+bspwm_pkg=("${xorg[@]}" "bspwm" "sxhkd" "polybar" "alacritty" \
+    "picom" "feh" "rofi" "lightdm" "lightdm-gtk-greeter")
+
+awesome_pkg=("${xorg[@]}" "awesome" "lightdm" "lightdm-gtk-greeter" \
+    "picom" "alacritty" "feh" "rofi")
+
+hyprland_pkg=("${wayland[@]}" "hyprland" "hyprpaper" "greetd" \
+    "greetd-gtkgreet" "foot" "waybar" "tofi" "jq")
+
+sway_pkg=("${wayland[@]}" "sway" "swaybg" "greetd" \
+    "greetd-gtkgreet" "foot" "waybar" "tofi")
+
+## directory names
+dirs=("nvim" "lf" "xdg-desktop-portal" "wallpapers")
+
+bspwm_dirs=("bspwm" "sxhkd" "alacritty" "polybar" "rofi" "picom" "feh" \ 
+    "flameshot")
+
+awesome_dirs=("awesome" "alacritty" "rofi" "feh" "flameshot")
+
+hyprland_dirs=("hypr" "waybar" "foot")
+
+sway_dirs=("sway" "waybar" "foot")
 
 usage() {
     echo -e "usage: install.sh <window manager>\n
@@ -25,24 +57,11 @@ install_yay() {
     rm -rf yay
 }
 
-install_dwl() {
-    cd build/arch/dwl
-    makepkg -sic
-}
-
-install_dwm() {
-    cd build/arch/dwm
-    makepkg -sic
-}
-
-check_package() {
-    bin="pacman"
+check_pkg() {
     case $1 in
-        installed)
-            cmd="-Qi"
-            ;;
-        repo)
-            cmd="-Si"
+        local)
+            bin="pacman"
+            cmd="-Qqi"
             ;;
         aur)
             bin="yay"
@@ -53,21 +72,50 @@ check_package() {
     return $?
 }
 
+setup_nvidia() {
+    if ! [[ -d /etc/pacman.d/hooks ]]; then
+        sudo mkdir /etc/pacman.d/hooks
+    fi
+    if ! [[ -f /etc/pacman.d/hooks/nvidia.hook ]]; then
+        sudo cp misc/pacman/nvidia.hook /etc/pacman.d/hooks/
+    fi
+    if ! grep -q nvidia /etc/mkinitcpio.conf; then
+        sudo sed -i '/MODULES/s/)/ nvidia nvidia_modeset nvidia_uvm nvidia_drm )/' /etc/mkinitcpio.conf
+        sudo mkinitcpio -P
+    fi
+    if grep -q kms /etc/mkinitcpio.conf; then
+        sudo sed -i 's/kms //' /etc/mkinitcpio.conf
+    fi
+    if ! [[ -f /etc/modprobe.d/nvidia.conf ]]; then
+        sudo cp misc/modprobe/nvidia.conf /etc/modprobe.d/
+    fi
+}
+
+setup_zsh() {
+    cp zshrc ~/.zshrc
+    cp zshenv ~/.zshenv
+    mkdir -p ~/.config/zsh
+    git clone https://github.com/zsh-users/zsh-autosuggestions \
+        ~/.config/zsh/zsh-autosuggestions/
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting \
+        ~/.config/zsh/zsh-syntax-highlighting/
+    chsh -s /usr/bin/zsh
+}
+
 ## copies user and system configs
 copy_configs() {
-    local dirs=("lf" "xdg-desktop-portal" "wallpapers")
     case $wm in
         bspwm)
-            dirs+=("bspwm" "sxhkd" "alacritty" "polybar" "rofi" "picom" "feh" "flameshot")
+            dirs+=(${bspwm_dirs[@]})
             ;;
         awesome)
-            dirs+=("awesome" "alacritty" "rofi" "feh" "flameshot")
+            dirs+=(${awesome_dirs[@]})
             ;;
         hyprland)
-            dirs+=("hypr" "waybar")
+            dirs+=(${hyprland_dirs[@]})
             ;;
         sway)
-            dirs+=("sway" "waybar")
+            dirs+=(${sway_dirs[@]})
     esac
     for i in ${dirs[@]}; do
         if ! [[ -d ~/.config/$i/ ]]; then
@@ -75,66 +123,35 @@ copy_configs() {
         fi
     done
 
-    ## install nvidia configs
-    if check_package installed nvidia; then
-        if ! [[ -d /etc/pacman.d/hooks ]]; then
-            sudo mkdir /etc/pacman.d/hooks
-        fi
-        if ! [[ -f /etc/pacman.d/hooks/nvidia.hook ]]; then
-            sudo cp misc/nvidia.hook /etc/pacman.d/hooks/
-        fi
+    if check_pkg local nvidia; then setup_nvidia; fi
+    if [[ $SHELL != "/usr/bin/zsh" ]]; then setup_zsh; fi
 
-        if ! grep -q nvidia /etc/mkinitcpio.conf; then
-            sudo sed -i '/MODULES/s/)/ nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
-	    sudo mkinitcpio -P
-        fi
-
-        if grep -q kms /etc/mkinitcpio.conf; then
-            sudo sed -i 's/kms// /etc/mkinitcpio.conf'
-        fi
-
-        if ! grep -qr 'modeset.*fbdev\|fbdev.*modeset' /boot/loader/entries/*; then
-            echo "options modeset=1 fbdev=1" | sudo tee -a /boot/loader/entries/*
-        fi
-    fi
-
-    ## stop mouse mouse acceleration
-    if [[ $server == "xorg" ]]; then
-        if ! [[ -d /etc/X11/xorg.conf.d/50-mouse-acceleration.conf ]]; then
-            sudo mkdir -p /etc/X11/xorg.conf.d/50-mouse-acceleration.conf
-            if ! [[ -f /etc/X11/xorg.conf.d/50-mouse-acceleration.conf ]]; then
-                sudo cp misc/50-mouse-acceleration.conf /etc/X11/xorg.conf.d/
-            fi
-        fi
-    fi
-
-    if check_package installed vim; then
-        if ! [[ -d ~/.vim ]]; then
-            cp -r vim ~/.vim/
-        fi
-    fi
-
-    ## copy interactive shell configs
-    if [[ $SHELL != "/usr/bin/zsh" ]]; then
-        cp zshrc ~/.zshrc
-        cp zshenv ~/.zshenv
-        mkdir -p ~/.config/zsh
-        git clone https://github.com/zsh-users/zsh-autosuggestions \
-            ~/.config/zsh/zsh-autosuggestions/
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting \
-            ~/.config/zsh/zsh-syntax-highlighting/
-        chsh -s /usr/bin/zsh
+    if check_pkg local vim; then
+        if ! [[ -d ~/.vim ]]; then cp -r vim ~/.vim/; fi
     fi
 
     if [[ $desktop == 0 ]]; then
         sudo systemctl enable tlp --now
     fi
+
+    if [[ $server == "xorg" ]]; then
+        if ! [[ -d /etc/X11/xorg.conf.d ]]; then
+            sudo mkdir /etc/X11/xorg.conf.d/
+        fi
+        if ! [[ -f /etc/X11/xorg.conf.d/50-mouse-acceleration.conf ]]; then
+            sudo cp misc/xorg/50-mouse-acceleration.conf /etc/X11/xorg.conf.d/
+        fi
+    fi
+
+    if check_pkg local rofi; then
+        if ! [[ -d ~/.local/share/fonts/ ]]; then
+            mkdir -p ~/.local/share/fonts/
+        fi
+        cp fonts/Icomoon-Feather.ttf ~/.local/share/fonts/
+    fi
 }
 
-## downloads and install packages
-## from pacman/yay/makepkg
 install() {
-    ## makes pacman faster
     if ! grep -qx 'ParallelDownloads = 8' /etc/pacman.conf; then
         sudo sed -i '/Color/s/^#//;
         /ParallelDownloads/s/^#//;
@@ -142,54 +159,53 @@ install() {
             /etc/pacman.conf
     fi
 
-    if [[ $wm == "dwm" ]]; then
-        install_dwm
+    local installed_list=$(pacman -Qsq)
+    local not_installed=$(comm -23 \
+        <(printf "%s\n" "${pkg_list[@]}" | sort) \
+        <(printf "%s\n" "${installed_list[@]}" | sort))
+
+    if [[ $not_installed == "" ]]; then
+        echo -e "\nThere are no packages to install, exiting..."
+        exit 0
     fi
-    if [[ $wm == "dwl" ]]; then
-        install_dwl
-    fi
 
-    local official=()
-    local aur=()
-    for i in ${pkg_list[@]}; do
-        if check_package installed $i; then
-            echo "$i is installed"
+    printf "Needs to be installed:\n%s\n \n" "${not_installed[@]}"
 
-        elif check_package repo $i; then
-            echo "found $i in the repos"
-            official+="$i "
+    local repo_list=$(pacman -Ssq)
+    local in_official=$(comm -12 \
+        <(printf "%s\n" "${not_installed[@]}" | sort) \
+        <(printf "%s\n" "${repo_list[@]}" | sort))
+    local not_in_official=$(comm -23 \
+        <(printf "%s\n" "${not_installed[@]}" | sort) \
+        <(printf "%s\n" "${repo_list[@]}" | sort))
 
-        else
-            if ! command -v yay &> /dev/null; then install_yay; fi
-            if check_package aur $i; then
+    local aur_list=()
+    if [[ $not_in_official != "" ]]; then
+        if ! command -v yay &> /dev/null; then install_yay; fi
+        for i in ${not_in_official[@]}; do
+            if check_pkg aur $i; then
                 echo "found $i in the aur"
-                aur+="$i "
+                aur_list+=($i)
             else
                 echo "$i does not exist. Skipping..."
             fi
-        fi
-    done
-
-    if [[ ${#official[@]} > 0 ]]; then
-        echo -e "\ninstalling from official repos:"
-        for i in ${official[@]}; do
-            echo $i
         done
-        sudo pacman -Syu $official
     fi
-    if [[ ${#aur[@]} > 0 ]]; then
-        echo -e "\ninstalling from the aur:"
-        for i in ${aur[@]}; do
-            echo $i
-        done
-        yay -S $aur
+
+    if [[ ${#in_official[@]} > 0 ]]; then
+        printf "\nInstalling from official repos:\n%s\n \n" "${in_official[@]}"
+        sudo pacman -Syu ${in_official[*]} --noconfirm
+    fi
+
+    if [[ ${#aur_list[@]} > 0 ]]; then
+        printf "Installing from aur:\n%s\n \n" "${aur_list[@]}"
+        yay -S ${aur_list[*]} --noconfirm
     fi
 }
 
 make_list() {
-    if lspci -k | grep nvidia &> /dev/null; then
-        nvidia=1;
-        pkg_list+=("nvidia" "nvidia-settings")
+    if lspci | grep NVIDIA &> /dev/null; then
+        pkg_list+=("nvidia")
     fi
 
     if ls /sys/class/backlight/* &> /dev/null; then
@@ -197,45 +213,23 @@ make_list() {
         pkg_list+=("brightnessctl" "tlp")
     fi
 
-    pkg_list+=( "zsh" "starship" "eza" "lf" "tmux" "neovim" "noto-fonts" \
-        "noto-fonts-cjk" "ttf-noto-nerd" "xdg-desktop-portal" \
-        "xdg-desktop-portal-gtk" "flatpak")
-
-    local xorg=("xorg-xrandr" "xclip" "flameshot")
-    local wayland=("wl-clipboard" "grim" "slurp")
     case $wm in
         bspwm)
-            server="xorg"
-            pkg_list+=("${xorg[@]}" "bspwm" "sxhkd" "polybar" "alacritty" \
-                "picom" "feh" "rofi" "lightdm" "lightdm-gtk-greeter")
+            pkg_list+=(${bspwm_pkg[@]})
             ;;
         awesome)
-            server="xorg"
-            pkg_list+=("${xorg[@]}" "awesome" "lightdm" "lightdm-gtk-greeter" \
-                "picom" "alacritty" "feh" "rofi")
+            pkg_list+=(${awesome_pkg[@]})
             ;;
         hyprland)
-            if [[ $nvidia == 1 ]]; then
-                echo "nvidia is not compatable with wayland"
-                exit 1
-            fi
-            server="wayland"
-            pkg_list+=("${wayland[@]}" "hyprland" "hyprpaper" "greetd" \
-                "greetd-gtkgreet" "foot" "waybar" "tofi" "jq")
+            pkg_list+=(${hyprland_pkg[@]})
             ;;
         sway)
-            if [[ $nvidia == 1 ]]; then
-                echo "nvidia is not compatable with wayland"
-                exit 1
-            fi
-            server="wayland"
-            pkg_list+=("${wayland[@]}" "sway" "swaybg" "greetd" \
-                "greetd-gtkgreet" "foot" "waybar" "tofi")
+            pkg_list+=(${sway_pkg[@]})
             ;;
         base)
             ;;
         *)
-            echo -e "*****Not a valid window manager*****\n"
+            echo -e "\n*****Not a valid window manager*****\n"
             usage
             exit 1
     esac
@@ -243,13 +237,13 @@ make_list() {
     echo "*****Add any extra packages or leave blank*****"
     read extra
     if ! [[ -z $extra ]]; then
-        pkg_list+=" ${extra[@]}"
+        pkg_list+=(${extra[@]})
     fi
 }
 
 main() {
-    sudo -v; if [[ $? != 0 ]]; then exit 1; fi
     if [[ -z $1 ]]; then usage; exit 1; fi
+    sudo -v; if [[ $? != 0 ]]; then exit 1; fi
     wm=$1
 
     make_list
