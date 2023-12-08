@@ -34,6 +34,7 @@ alias snv="sudo nvim"
 
 # package managers
 alias p="pacman"
+alias psearch="pacman -Slq | fzf --preview 'pacman -Si {}' --layout=reverse"
 alias sp="sudo pacman"
 alias sps="sudo pacman -S"
 alias spr="sudo pacman -Rns"
