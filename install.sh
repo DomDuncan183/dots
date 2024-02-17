@@ -1,40 +1,37 @@
 #!/usr/bin/bash
 
-wm=
-laptop=
-server=
+wm=""
+display_server=""
+laptop=0
 
 ## universal packages
-pkg_list=("zsh" "starship" "eza" "lf" "tmux" "neovim" "noto-fonts" \
-    "noto-fonts-cjk" "ttf-noto-nerd" "xdg-desktop-portal" \
-    "xdg-desktop-portal-gtk" "flatpak" "pipewire" \
-    "pipewire-pulse" "wireplumber" "man-db")
+pkg_list=("zsh" "starship" "eza" "lf" "tmux" "neovim" "noto-fonts"
+    "noto-fonts-cjk" "noto-fonts-emoji" "ttf-noto-nerd" "xdg-desktop-portal"
+    "xdg-desktop-portal-gtk" "flatpak" "pipewire" "pipewire-pulse" "wireplumber"
+    "man-db" "zsh-syntax-highlighting" "zsh-autosuggestions" "fastfetch")
 
 ## package names
-xorg=("xorg-xrandr" "xclip" "flameshot")
+xorg=("xorg-xrandr" "xorg-xsetroot" "xclip" "flameshot")
 wayland=("wl-clipboard" "grim" "slurp")
 
-bspwm_pkg=("${xorg[@]}" "bspwm" "sxhkd" "polybar" "alacritty" \
+bspwm_pkg=("${xorg[@]}" "bspwm" "sxhkd" "polybar" "alacritty"
     "picom" "feh" "rofi" "lightdm" "lightdm-gtk-greeter")
 
-awesome_pkg=("${xorg[@]}" "awesome" "lightdm" "lightdm-gtk-greeter" \
+awesome_pkg=("${xorg[@]}" "awesome" "lightdm" "lightdm-gtk-greeter"
     "picom" "alacritty" "feh" "rofi")
 
-hyprland_pkg=("${wayland[@]}" "hyprland" "hyprpaper" "greetd" \
-    "greetd-gtkgreet" "foot" "waybar" "tofi" "jq")
+hyprland_pkg=("${wayland[@]}" "hyprland" "hyprpaper" "foot" "waybar" "jq" "xdg-desktop-portal-hyprland")
 
-sway_pkg=("${wayland[@]}" "sway" "swaybg" "greetd" \
-    "greetd-gtkgreet" "foot" "waybar" "tofi")
+sway_pkg=("${wayland[@]}" "sway" "swaybg" "foot" "waybar" "jq" "xdg-desktop-portal-wlr")
 
 ## directory names
 dirs=("nvim" "lf" "xdg-desktop-portal" "wallpapers")
 
-bspwm_dirs=("bspwm" "sxhkd" "alacritty" "polybar" "rofi" "picom" "feh" \ 
-    "flameshot")
+bspwm_dirs=("bspwm" "sxhkd" "alacritty" "polybar" "rofi" "picom" "feh" "flameshot")
 
 awesome_dirs=("awesome" "alacritty" "rofi" "feh" "flameshot")
 
-hyprland_dirs=("hypr" "waybar" "foot")
+hyprland_dirs=("hypr" "waybar" "foot" "fuzzel")
 
 sway_dirs=("sway" "waybar" "foot")
 
@@ -59,16 +56,17 @@ install_yay() {
 
 check_pkg() {
     case $1 in
-        local)
-            bin="pacman"
-            cmd="-Qqi"
-            ;;
-        aur)
-            bin="yay"
-            cmd="-Si"
+    local)
+        bin="pacman"
+        cmd="-Qqi"
+        ;;
+    aur)
+        bin="yay"
+        cmd="-Si"
+        ;;
     esac
 
-    $bin $cmd $2 &> /dev/null
+    $bin $cmd $2 &>/dev/null
     return $?
 }
 
@@ -81,7 +79,6 @@ setup_nvidia() {
     fi
     if ! grep -q nvidia /etc/mkinitcpio.conf; then
         sudo sed -i '/MODULES/s/)/ nvidia nvidia_modeset nvidia_uvm nvidia_drm )/' /etc/mkinitcpio.conf
-        sudo mkinitcpio -P
     fi
     if grep -q kms /etc/mkinitcpio.conf; then
         sudo sed -i 's/kms //' /etc/mkinitcpio.conf
@@ -89,33 +86,32 @@ setup_nvidia() {
     if ! [[ -f /etc/modprobe.d/nvidia.conf ]]; then
         sudo cp misc/modprobe/nvidia.conf /etc/modprobe.d/
     fi
+
+    sudo mkinitcpio -P
 }
 
 setup_zsh() {
     cp zshrc ~/.zshrc
     cp zshenv ~/.zshenv
     mkdir -p ~/.config/zsh
-    git clone https://github.com/zsh-users/zsh-autosuggestions \
-        ~/.config/zsh/zsh-autosuggestions/
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting \
-        ~/.config/zsh/zsh-syntax-highlighting/
     chsh -s /usr/bin/zsh
 }
 
 ## copies user and system configs
 copy_configs() {
     case $wm in
-        bspwm)
-            dirs+=(${bspwm_dirs[@]})
-            ;;
-        awesome)
-            dirs+=(${awesome_dirs[@]})
-            ;;
-        hyprland)
-            dirs+=(${hyprland_dirs[@]})
-            ;;
-        sway)
-            dirs+=(${sway_dirs[@]})
+    bspwm)
+        dirs+=(${bspwm_dirs[@]})
+        ;;
+    awesome)
+        dirs+=(${awesome_dirs[@]})
+        ;;
+    hyprland)
+        dirs+=(${hyprland_dirs[@]})
+        ;;
+    sway)
+        dirs+=(${sway_dirs[@]})
+        ;;
     esac
     for i in ${dirs[@]}; do
         if ! [[ -d ~/.config/$i/ ]]; then
@@ -134,7 +130,7 @@ copy_configs() {
         sudo systemctl enable tlp --now
     fi
 
-    if [[ $server == "xorg" ]]; then
+    if [[ $display_server == "xorg" ]]; then
         if ! [[ -d /etc/X11/xorg.conf.d ]]; then
             sudo mkdir /etc/X11/xorg.conf.d/
         fi
@@ -181,7 +177,7 @@ install() {
 
     local aur_list=()
     if [[ $not_in_official != "" ]]; then
-        if ! command -v yay &> /dev/null; then install_yay; fi
+        if ! command -v yay &>/dev/null; then install_yay; fi
         for i in ${not_in_official[@]}; do
             if check_pkg aur $i; then
                 echo "found $i in the aur"
@@ -204,34 +200,38 @@ install() {
 }
 
 make_list() {
-    if lspci | grep NVIDIA &> /dev/null; then
+    if lspci | grep NVIDIA &>/dev/null; then
         pkg_list+=("nvidia")
     fi
 
-    if ls /sys/class/backlight/* &> /dev/null; then
+    if ls /sys/class/backlight/* &>/dev/null; then
         laptop=1
         pkg_list+=("brightnessctl" "tlp")
     fi
 
     case $wm in
-        bspwm)
-            pkg_list+=(${bspwm_pkg[@]})
-            ;;
-        awesome)
-            pkg_list+=(${awesome_pkg[@]})
-            ;;
-        hyprland)
-            pkg_list+=(${hyprland_pkg[@]})
-            ;;
-        sway)
-            pkg_list+=(${sway_pkg[@]})
-            ;;
-        base)
-            ;;
-        *)
-            echo -e "\n*****Not a valid window manager*****\n"
-            usage
-            exit 1
+    bspwm)
+        display_server="xorg"
+        pkg_list+=(${bspwm_pkg[@]})
+        ;;
+    awesome)
+        display_server="xorg"
+        pkg_list+=(${awesome_pkg[@]})
+        ;;
+    hyprland)
+        display_server="wayland"
+        pkg_list+=(${hyprland_pkg[@]})
+        ;;
+    sway)
+        display_server="wayland"
+        pkg_list+=(${sway_pkg[@]})
+        ;;
+    base) ;;
+    *)
+        echo -e "\n*****Not a valid window manager*****\n"
+        usage
+        exit 1
+        ;;
     esac
 
     echo "*****Add any extra packages or leave blank*****"
@@ -242,8 +242,12 @@ make_list() {
 }
 
 main() {
-    if [[ -z $1 ]]; then usage; exit 1; fi
-    sudo -v; if [[ $? != 0 ]]; then exit 1; fi
+    if [[ -z $1 ]]; then
+        usage
+        exit 1
+    fi
+    sudo -v
+    if [[ $? != 0 ]]; then exit 1; fi
     wm=$1
 
     make_list
