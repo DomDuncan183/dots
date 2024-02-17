@@ -5,9 +5,6 @@ nmap <leader>ss :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
 xmap <silent> <leader>y y<cmd>call system("wl-copy", @")<cr>
 nmap <silent> <leader>x <cmd>!chmod +x %<cr>
 
-vmap K :m '<-2<cr>gv=gv
-vmap J :m '<+1<cr>gv=gv
-
 " file marks
 nmap <leader>1 mA
 nmap <leader>2 mB
