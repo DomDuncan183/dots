@@ -1,0 +1,48 @@
+* {
+    font-family: NotoSans NFP;
+    font-size: 14px;
+    min-height: 0;
+    /*transition: all .2s ease-in-out;*/
+}
+window#waybar {
+    background: #1c1c1c;
+    color: #cccccc;
+    border-radius: 0 0 10px 10px;
+}
+#workspaces button {
+    color: #525252;
+    border: none;
+    padding: 4px;
+    margin: 0 5px;
+}
+#workspaces button.persistent {
+    color: #262626;
+}
+#workspaces button.focused {
+    color: #cccccc;
+    transition: color .2s ease-in-out;
+}
+#workspaces button:hover {
+    transition: none;
+    background: none;
+    box-shadow: none;
+    text-shadow: none;
+}
+#clock,
+#wireplumber,
+#window,
+#workspaces {
+    background: #363636;
+    border-radius: .7rem;
+    font-weight: 600;
+    margin: 4px 0;
+    padding: 0 10px;
+}
+window#waybar.empty #window{
+    background: transparent;
+    transition: all .2s ease-in-out;
+}
+#clock { margin-right: 20px; }
+#wireplumber { margin-right: 20px; }
+#wireplumber.muted { color: #000000; background: #b0b0b0; }
+#workspaces { margin-left: 20px; }
