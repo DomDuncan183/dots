@@ -1,0 +1,40 @@
+{
+    "logo": {
+        "type": "small",
+        "color": { "1": "blue" }
+    },
+    "modules": [
+        "break",
+        {
+            "type": "title",
+            "color": {
+                "user": "red",
+                "at": "red",
+                "host": "red"
+            }
+        },
+        {
+            "type": "host",
+            "keycolor": "red"
+        },
+        {
+            "type": "kernel",
+            "keycolor": "red"
+        },
+        {
+            "type": "uptime",
+            "key": " ",
+            "keycolor": "red"
+        },
+        {
+            "type": "packages",
+            "key": " ",
+            "keycolor": "red"
+        },
+        {
+            "type": "memory",
+            "key": "󰍛 ",
+            "keycolor": "red"
+        }
+    ]
+}
