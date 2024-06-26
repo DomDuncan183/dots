@@ -7,20 +7,25 @@
 window#waybar {
     background: #1c1c1c;
     color: #cccccc;
-    border-radius: 0 0 10px 10px;
+    /* border-radius: 0 0 10px 10px; */
 }
 #workspaces button {
-    color: #525252;
+    /* color: #525252; */
+    color: #262626;
     border: none;
     padding: 4px;
     margin: 0 5px;
 }
-#workspaces button.persistent {
-    color: #262626;
+/* #workspaces button.persistent { */
+/*     color: #262626; */
+/* } */
+#workspaces button.current_output {
+    /* color: #C9F66F; */
+    color: #525252;
 }
 #workspaces button.focused {
     color: #cccccc;
-    transition: color .2s ease-in-out;
+    /* transition: color .2s ease-in-out; */
 }
 #workspaces button:hover {
     transition: none;
@@ -28,21 +33,55 @@ window#waybar {
     box-shadow: none;
     text-shadow: none;
 }
-#clock,
-#wireplumber,
-#window,
-#workspaces {
-    background: #363636;
-    border-radius: .7rem;
-    font-weight: 600;
-    margin: 4px 0;
-    padding: 0 10px;
-}
 window#waybar.empty #window{
     background: transparent;
     transition: all .2s ease-in-out;
 }
-#clock { margin-right: 20px; }
-#wireplumber { margin-right: 20px; }
-#wireplumber.muted { color: #000000; background: #b0b0b0; }
-#workspaces { margin-left: 20px; }
+#clock,
+#window,
+#workspaces {
+    background: #363636;
+    border-radius: 2px;
+    font-weight: 600;
+    margin: 4px 0;
+    padding: 0 10px;
+}
+#workspaces {
+    margin-left: 10px;
+}
+#custom-firefox,
+#custom-explorer,
+#custom-localsend,
+#custom-signal {
+    background: #363636;
+    padding: 0 10px;
+    margin: 4px 0;
+}
+#custom-firefox {
+    border-radius: 2px 0 0 2px;
+}
+#custom-signal {
+    border-radius: 0 2px 2px 0;
+    margin-right: 10px;
+}
+#pulseaudio,
+#battery,
+#network,
+#backlight {
+    background: #363636;
+    padding: 0 10px;
+    margin: 4px 0;
+}
+#network {
+    margin-right: 10px;
+    border-radius: 0 2px 2px 0;
+}
+#pulseaudio {
+    border-radius: 2px 0 0 2px;
+}
+#pulseaudio.muted {
+    color: #000000; background: #b0b0b0;
+}
+#clock {
+    margin-right: 10px;
+}

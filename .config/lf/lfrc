@@ -1,6 +1,46 @@
+set number
+set relativenumber
 set ignorecase
 set icons
+set hidden
+set sixel
+
+set previewer "~/.config/lf/pv.sh"
+#cmd on-select &{{ lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\"" }}
+#cmd on-select &{{ lf -remote "send $id set statfmt \"$(echo lol)\"" }}
+
+cmd fzf_jump ${{
+    #fzf_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+    res="$(fd --hidden --exclude .git . | fzf --preview "$HOME/.config/scripts/preview.sh fzf {}")"}
+
+    if [ -n "$res" ]; then
+        if [ -d "$res" ]; then
+            cmd="cd"
+        else
+            cmd="select"
+        fi
+        lf -remote "send $id $cmd \"$res\""
+    fi
+}}
+map <c-f> :fzf_jump
+
+cmd fzf_search ${{
+    rg="rg -. --line-number --with-filename --no-heading --color=always"
+    res="$(
+        $rg "" | \
+        fzf --ansi \
+            --delimiter ":" \
+            --preview "bat --color=always {1} --highlight-line {2}" \
+            --preview-window "+{2}+3/2" \
+            --bind "change:reload:$rg {q} || true" | \
+        cut -d ":" -f1 \
+        )"
+
+    [ -n "$res" ] && lf -remote "send $id select \"$res\""
+}}
+map gs :fzf_search
 
 map gc cd ~/.config
 map gr cd ~/.repos
 map gm cd /mnt
+map gd cd ~/Downloads

@@ -1,7 +1,10 @@
 {
     "logo": {
         "type": "small",
-        "color": { "1": "blue" }
+        "color": { "1": "blue" },
+        "padding": {
+            "top": 1
+        }
     },
     "modules": [
         "break",
@@ -35,6 +38,10 @@
             "type": "memory",
             "key": "󰍛 ",
             "keycolor": "red"
+        },
+        {
+            "type": "custom",
+            "format": "\n"
         }
     ]
 }
