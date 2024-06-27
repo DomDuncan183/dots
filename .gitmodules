@@ -16,4 +16,4 @@
         shallow = true
 [submodule ".config/nvim"]
         path = .config/nvim
-        url = https://github.com/domduncan183/nvim
+        url = git@github.com:DomDuncan183/nvim.git
