@@ -1,0 +1,52 @@
+format="""\
+$os\
+[](fg:cyan bg:blue)\
+$username\
+[](fg:blue bg:green)\
+$directory\
+[](fg:green bg:purple)\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+[ ](fg:purple)\
+"""
+
+right_format = """\
+[](fg:black)\
+$character\
+"""
+
+[os]
+disabled = false
+format = "[ $symbol ]($style)"
+style = "fg:black bg:cyan"
+
+[os.symbols]
+Arch = "󰣇"
+
+[username]
+show_always = true
+format = '[ $user ]($style)'
+style_user = "fg:black bg:blue"
+
+[hostname]
+ssh_only = false
+format = '[@$hostname ](fg:black bg:blue)'
+
+[directory]
+format = "[ $path ]($style)"
+style = "fg:black bg:green"
+
+[git_branch]
+style = "fg:black bg:purple"
+format = '[ $symbol$branch ]($style)'
+
+[git_status]
+format = '[\[$all_status$ahead_behind\]](fg:black bg:purple)'
+deleted="×"
+
+[character]
+success_symbol = "[   ](fg:green bg:black)"
+error_symbol = "[   ](fg:purple bg:black)"

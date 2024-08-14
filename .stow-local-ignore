@@ -2,3 +2,4 @@
 \.gitmodules
 build
 misc
+install.sh

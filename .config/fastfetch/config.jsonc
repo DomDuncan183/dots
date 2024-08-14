@@ -1,7 +1,10 @@
 {
     "logo": {
         "type": "small",
-        "color": { "1": "blue" },
+        "color": {
+            "1": "blue",
+            "2": "blue"
+        },
         "padding": {
             "top": 1
         }
@@ -11,33 +14,33 @@
         {
             "type": "title",
             "color": {
-                "user": "red",
-                "at": "red",
-                "host": "red"
+                "user": "cyan",
+                "at": "cyan",
+                "host": "cyan"
             }
         },
         {
             "type": "host",
-            "keycolor": "red"
+            "keycolor": "cyan"
         },
         {
             "type": "kernel",
-            "keycolor": "red"
+            "keycolor": "cyan"
         },
         {
             "type": "uptime",
             "key": " ",
-            "keycolor": "red"
+            "keycolor": "cyan"
         },
         {
             "type": "packages",
             "key": " ",
-            "keycolor": "red"
+            "keycolor": "cyan"
         },
         {
             "type": "memory",
             "key": "󰍛 ",
-            "keycolor": "red"
+            "keycolor": "cyan"
         },
         {
             "type": "custom",

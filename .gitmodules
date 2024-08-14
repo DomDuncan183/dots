@@ -2,18 +2,23 @@
         path = .config/zsh/zsh-syntax-highlighting
         url = https://github.com/zsh-users/zsh-syntax-highlighting
         shallow = true
+
 [submodule ".config/zsh/zsh-autosuggestions"]
         path = .config/zsh/zsh-autosuggestions
         url = https://github.com/zsh-users/zsh-autosuggestions
         shallow = true
+
 [submodule ".config/tmux/plugins/tpm"]
         path = .config/tmux/plugins/tpm
         url = https://github.com/tmux-plugins/tpm
         shallow = true
+
 [submodule ".config/tmux/plugins/tmux-resurrect"]
         path = .config/tmux/plugins/tmux-resurrect
         url = https://github.com/tmux-plugins/tmux-resurrect
         shallow = true
+
 [submodule ".config/nvim"]
         path = .config/nvim
         url = git@github.com:DomDuncan183/nvim.git
+        shallow = true

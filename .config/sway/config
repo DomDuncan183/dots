@@ -1,8 +1,9 @@
 set $scripts ~/.config/sway/scripts/
 set $bardir ~/.config/waybar/sway/
+set $wallpaper berserk-night.jpg
 
 # output * bg /home/dom/.config/wallpapers/matou.png fill
-output * bg /home/dom/.config/wallpapers/berserk-night.jpg fill
+output * bg /home/dom/.config/wallpapers/$wallpaper fill
 output eDP-1 resolution 1920x1080@60Hz position 0,0
 output DP-1 resolution 1920x1080@60Hz position 0,0
 
@@ -36,7 +37,7 @@ input "9639:64123:Compx_X2_Wireless" {
     accel_profile flat
 }
 
-bindsym mod4+return exec foot
+bindsym mod4+return exec wezterm
 bindsym mod4+c kill
 bindsym mod4+control+c kill
 bindsym mod4+d exec bemenu-run -H 36 --tb '#1C1C1C' --tf '#1C1C1C' --fb '#1C1C1C' --nb '#1C1C1C' --hb '#0F0F0F' --hf '#C9F66F' --ab '#1C1C1C'
@@ -101,7 +102,7 @@ bindsym XF86AudioLowerVolume            exec wpctl set-volume @DEFAULT_AUDIO_SIN
 bindsym XF86AudioMute                   exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 bindsym XF86AudioMicMute                exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
 
-bindsym mod4+shift+p                    exec swaylock -i ~/.config/wallpapers/matou.png
+bindsym mod4+shift+p                    exec swaylock -i ~/.config/wallpapers/$wallpaper
 bindsym mod4+control+h                  exec $scripts/workspace.sh prev view
 bindsym mod4+control+l                  exec $scripts/workspace.sh next view
 bindsym mod4+alt+h                      exec $scripts/workspace.sh prev move

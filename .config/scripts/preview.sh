@@ -3,19 +3,17 @@
 width=50
 height=50
 
-program=$1
-file=$2
-
-if ! [[ -z ${3+x} && -z ${4+x} ]]; then
-    width=$3
-    height=$4
+if [[ $1 == "rg" ]]; then
+    program="rg"
+    file=$2
+    line=$3
+else
+    file=$1
+    width=$2
+    height=$3
 fi
 
-if [[ $program == "fzf" && -d "$file" ]]; then
-    eza --tree --color=always "$file" | head -200
-    exit 0
-fi
-
+# check file extensions
 case "$file" in
 *.tar*)
     tar tf "$file"
@@ -32,10 +30,46 @@ case "$file" in
 *.pdf)
     pdftotext "$file" -
     ;;
-*.jpg | *.jpeg | *.png)
+*.txt | *.json)
+    args=(--color always "$file")
+    if [[ $program == "rg" ]]; then
+        args+=(--highlight-line "$line")
+    fi
+
+    bat "${args[@]}"
+    ;;
+*)
+    bat --color always "$file"
+    ;;
+esac
+
+# check mime types
+type=$(file --dereference --brief --mime-type "$file")
+name=$(basename "$file")
+name="${name%.*}"
+
+case "$type" in
+inode/directory)
+    eza --tree --color=always "$file" | head -200
+    ;;
+image/*)
+    # lf_sixel_cache="$HOME/.cache/thumbnails/lf_sixel_cache"
+    # full_name="$lf_sixel_cache/$name.sixel"
+    #
+    # # echo "$width"
+    # # echo "$height"
+    #
+    # if [[ -f "$full_name" ]]; then
+    #     cat "$full_name"
+    # else 
+    #     # img2sixel "$file" -w "$width" -h "$height" -o "$full_name"
+    #     img2sixel "$file" -w 50% -h 50% -o "$full_name"
+    #     cat "$full_name"
+    # fi
+
     chafa -f sixel -s "$width"x"$height" --animate off --polite on "$file"
     ;;
-*.avi | *.gif | *.mp4 | *.mkv | *.webm)
+video/*)
     ffmpeg_cache="$HOME/.cache/thumbnails/ffmpeg"
     # sixel_cache="$HOME/.cache/thumbnails/sixel"
 
@@ -61,8 +95,5 @@ case "$file" in
     # chafa -f sixel -s "$widthx$height" --animate off --polite on "$sixel_img"
     chafa -f sixel -s "$width"x"$height" --animate off --polite on "$ffmpeg_thumbnail"
     # cat "$sixel_img"
-    ;;
-*)
-    bat --color always "$file"
     ;;
 esac
