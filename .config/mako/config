@@ -1,0 +1,4 @@
+background-color=#1c1c1c
+border-color=#cccccc
+default-timeout=5000
+ignore-timeout=1

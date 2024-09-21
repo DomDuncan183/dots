@@ -1,14 +1,13 @@
 {
     "layer": "top",
-    // "width": 1800,
 
     "modules-left": [ "hyprland/workspaces" ],
     "modules-center": [],
     "modules-right": [
         "battery",
         "backlight",
-        "network",
         "pulseaudio",
+        "network",
         "clock"
     ],
 
@@ -19,13 +18,14 @@
         },
         "persistent-workspaces": {
             "eDP-1": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
+            "DP-3": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         },
         "on-scroll-up": "~/.config/hypr/scripts/workspace.sh workspace incrementWorkspace next",
         "on-scroll-down": "~/.config/hypr/scripts/workspace.sh workspace incrementWorkspace prev"
     },
 
     "battery": {
-        "bat": "BAT0",
+        "bat": "BAT1",
         "interval": 60,
         "states": {
             "warning": 30,
@@ -63,10 +63,22 @@
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
     },
 
+    "network": {
+        "format": "{ifname}",
+        "format-wifi": "   {signalStrength}%",
+        "format-ethernet": "   {ipaddr}/{cidr}",
+        "format-disconnected": "",
+        "tooltip-format": "󰊗   {ifname} via {gwaddr}",
+        "tooltip-format-wifi": "   {signalStrength}%",
+        "tooltip-format-ethernet": "   {ifname}",
+        "tooltip-format-disconnected": "Disconnected",
+        "max-length": 50
+    },
+
     "clock": {
         "format": "  {:%H:%M}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
         "format-alt": "{:%Y-%m-%d}"
-    },
+    }
 }
 

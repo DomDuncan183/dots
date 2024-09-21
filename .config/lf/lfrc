@@ -5,7 +5,8 @@ set icons
 set hidden
 set sixel
 
-set previewer "~/.config/scripts/preview.sh"
+set previewer ~/.config/lf/scripts/pv.sh
+set cleaner ~/.config/lf/scripts/cleaner.sh
 
 cmd on-select &{{
     lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
@@ -24,7 +25,7 @@ cmd on-cd &{{
 }}
 
 cmd fzf_jump ${{
-    res="$(fd --hidden --exclude .git . | fzf --preview "~/.config/scripts/preview.sh {} 20 20")"
+    res="$(fd --hidden --exclude .git . | fzf --preview "~/.config/scripts/preview.sh fzf {} 20 20")"
     if [ -n "$res" ]; then
         if [ -d "$res" ]; then
             cmd="cd"
@@ -35,7 +36,7 @@ cmd fzf_jump ${{
     fi
 }}
 
-cmd fzf_search ${{
+cmd rg_search ${{
     rg="rg -. --line-number --with-filename --no-heading --color=always"
     res="$(
         $rg "" | \
@@ -52,7 +53,8 @@ cmd fzf_search ${{
 
 on-cd
 map <c-f> :fzf_jump
-map gs :fzf_search
+map gs :rg_search
+map gw cd ~/.var/app/com.usebottles.bottles/data/bottles/bottles
 map gc cd ~/.config
 map gr cd ~/.repos
 map gm cd /mnt

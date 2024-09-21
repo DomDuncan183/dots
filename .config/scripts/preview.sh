@@ -1,99 +1,117 @@
-#!/bin/bash
+#!/usr/bin/dash
 
-width=50
-height=50
+drawKitty() {
+    case "$1" in
+    fzf)
+        kitty icat --clear --transfer-mode memory --stdin no --silent --place "${w}x${h}@0x0" "$file"
+        ;;
+    lf)
+        kitty +kitten icat --silent --stdin no --transfer-mode file --place "${w}x${h}@${x}x${y+5}" "$file" </dev/null >/dev/tty
+        exit 1
+        ;;
+    esac
+}
 
-if [[ $1 == "rg" ]]; then
-    program="rg"
-    file=$2
-    line=$3
-else
-    file=$1
-    width=$2
-    height=$3
-fi
+drawSixel() {
+    chafa -f sixel -s "$w"x"$h" --animate off --polite on "$file"
+    exit 0
+}
 
-# check file extensions
-case "$file" in
-*.tar*)
-    tar tf "$file"
-    ;;
-*.zip)
-    unzip -l "$file"
-    ;;
-*.rar)
-    unrar l "$file"
-    ;;
-*.7z)
-    7z l "$file"
-    ;;
-*.pdf)
-    pdftotext "$file" -
-    ;;
-*.txt | *.json)
-    args=(--color always "$file")
-    if [[ $program == "rg" ]]; then
-        args+=(--highlight-line "$line")
-    fi
+checkExtension() {
+    if [ -d "$file" ]; then return; fi
+    case "$file" in
+    *.tar*)
+        tar tf "$file"
+        ;;
+    *.zip)
+        unzip -l "$file"
+        ;;
+    *.rar)
+        unrar l "$file"
+        ;;
+    *.7z)
+        7z l "$file"
+        ;;
+    *.pdf)
+        pdftotext "$file" -
+        ;;
+    *)
+        if [ "$program" = "rg" ]; then
+            if [ -r "$file" ]; then
+                bat --color always "$file" --highlight-line "$line"
+            fi
+        else
+            bat --color always "$file"
+        fi
+        ;;
+    esac
+}
 
-    bat "${args[@]}"
-    ;;
-*)
-    bat --color always "$file"
-    ;;
-esac
+checkMimeType() {
+    local mimeType
+    local name
 
-# check mime types
-type=$(file --dereference --brief --mime-type "$file")
-name=$(basename "$file")
-name="${name%.*}"
-
-case "$type" in
-inode/directory)
-    eza --tree --color=always "$file" | head -200
-    ;;
-image/*)
-    # lf_sixel_cache="$HOME/.cache/thumbnails/lf_sixel_cache"
-    # full_name="$lf_sixel_cache/$name.sixel"
-    #
-    # # echo "$width"
-    # # echo "$height"
-    #
-    # if [[ -f "$full_name" ]]; then
-    #     cat "$full_name"
-    # else 
-    #     # img2sixel "$file" -w "$width" -h "$height" -o "$full_name"
-    #     img2sixel "$file" -w 50% -h 50% -o "$full_name"
-    #     cat "$full_name"
-    # fi
-
-    chafa -f sixel -s "$width"x"$height" --animate off --polite on "$file"
-    ;;
-video/*)
-    ffmpeg_cache="$HOME/.cache/thumbnails/ffmpeg"
-    # sixel_cache="$HOME/.cache/thumbnails/sixel"
-
+    mimeType=$(file --dereference --brief --mime-type "$file")
     name=$(basename "$file")
     name="${name%.*}"
 
-    ffmpeg_thumbnail="$HOME/.cache/thumbnails/ffmpeg/${name%.*}.png"
-    # sixel_img="$HOME/.cache/thumbnails/sixel/${name%.*}.sixel"
+    case "$mimeType" in
+    inode/directory)
+        eza --tree --color=always "$file"
+        ;;
+    image/*)
+        drawKitty "$program"
+        ;;
+    video/*)
+        local ffmpeg_cache
+        local ffmpeg_thumbnail
 
-    if ! [[ -d $ffmpeg_cache ]]; then
-        mkdir "$ffmpeg_cache"
-    fi
-    # if ! [[ -d $sixel_cache ]]; then
-    #     mkdir "$sixel_cache"
-    # fi
-    if ! [[ -f $ffmpeg_thumbnail ]]; then
-        ffmpegthumbnailer -i "$file" -s 0 -q 5 -o "$HOME/.cache/thumbnails/ffmpeg/${name%.*}.png"
-    fi
-    # if ! [[ -f $sixel_img ]]; then
-    #     img2sixel -w "$width" -h "$height" "$ffmpeg_thumbnail" -o "$sixel_img"
-    # fi
+        ffmpeg_cache="$HOME/.cache/thumbnails/ffmpeg"
+        ffmpeg_thumbnail="$HOME/.cache/thumbnails/ffmpeg/${name%.*}.png"
 
-    # chafa -f sixel -s "$widthx$height" --animate off --polite on "$sixel_img"
-    chafa -f sixel -s "$width"x"$height" --animate off --polite on "$ffmpeg_thumbnail"
-    # cat "$sixel_img"
-    ;;
-esac
+        if ! [ -d "$ffmpeg_cache" ]; then
+            mkdir "$ffmpeg_cache"
+        fi
+        if ! [ -f "$ffmpeg_thumbnail" ]; then
+            ffmpegthumbnailer -i "$file" -s 0 -q 5 -o "$HOME/.cache/thumbnails/ffmpeg/${name%.*}.png"
+        fi
+
+        drawKitty "$ffmpeg_thumbnail"
+        ;;
+    esac
+}
+
+main() {
+    case "$1" in
+    fzf)
+        kitty icat --clear --stdin no --silent --transfer-mode memory
+
+        local program="$1"
+        local file=$2
+        local w=78
+        local h=78
+
+        checkExtension 
+        checkMimeType
+        ;;
+    rg)
+        local program="$1"
+        local file=$2
+        local line=$3
+
+        checkExtension
+        ;;
+    lf)
+        local program="$1"
+        local file=$2
+        local w=$3
+        local h=$4
+        local x=$5
+        local y=$6
+
+        checkExtension
+        checkMimeType
+        ;;
+    esac
+}
+main "$@"

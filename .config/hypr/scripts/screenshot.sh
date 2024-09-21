@@ -2,7 +2,6 @@
 
 date=$(date +'%y-%m-%d')
 folder=$HOME/Pictures/Screenshots
-sopts="-b 000000BF -c ffffff80"
 type="_$1"
 
 if ! [[ -d "$folder/$1/$date" ]]; then
@@ -10,25 +9,23 @@ if ! [[ -d "$folder/$1/$date" ]]; then
 fi
 
 if [[ -f "$folder/$1/$date/$date.png" ]]; then
-    for i in $folder/$1/$date/$date*.png; do
-        inc=$(($inc+ 1))
-    done
-    amount="_$inc"
-    echo $amount
+    fileNameList=("$screenshotDir/$1/$date*.png")
+    fileNum="_${#fileNameList[@]}"
 fi
 
 case "$1" in
-    "snip")
-        grim -g "$(slurp $sopts)" "$folder/$1/$date/$date$amount.png"
-        wl-copy -t image/png < "$folder/$1/$date/$date$amount.png"
-        if [[ $? == 0 ]]; then
-            notify-send "Screenshot (snip)" "Copied to clipboard and saved as $date$amount.png"
-        fi
-        ;;
-    "full")
-        mon=$(hyprctl -j activeworkspace | jq -r '.["monitor"]')
-        grim -o $mon $folder/"$date$type$amount.png"
-        if [[ $? == 0 ]]; then
-            notify-send "Screenshot (full)" "Saved as $date$type$amount.png"
-        fi
+"snip")
+    grim -g "$(slurp "-b 000000BF -c ffffff80")" "$folder/$1/$date/$date$fileNum.png"
+
+    if wl-copy -t image/png <"$folder/$1/$date/$date$fileNum.png"; then
+        notify-send "Screenshot (snip)" "Copied to clipboard and saved as $date$fileNum.png"
+    fi
+    ;;
+"full")
+    mon=$(hyprctl -j activeworkspace | jq -r '.["monitor"]')
+
+    if grim -o "$mon" "$folder/$date$type$fileNum.png"; then
+        notify-send "Screenshot (full)" "Saved as $date$type$fileNum.png"
+    fi
+    ;;
 esac

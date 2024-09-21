@@ -1,35 +1,37 @@
-#!/usr/bin/bash
+#!/usr/bin/dash
 
-date=$(date +'%y-%m-%d')
-screenshotDir=$HOME/Pictures/Screenshots
+main() {
+    local date
+    local fileNum
+    local picturePath
 
-if ! [[ -d "$screenshotDir/$1/$date" ]]; then
-    mkdir "$screenshotDir/$1/$date"
-fi
+    local type=$1
+    local dir="$HOME/Pictures/Screenshots/$type"
+    date=$(date +'%y-%m-%d')
 
-if [[ -f "$screenshotDir/$1/$date/$date.png" ]]; then
-    for i in $screenshotDir/$1/$date/$date*.png; do
-        inc=$(($inc + 1))
-    done
-    amount="_$inc"
-fi
-picturePath="$screenshotDir/$1/$date/$date$amount.png"
-
-case "$1" in
-"Region")
-    grim -g "$(slurp -b 000000BF -c ffffff80)" $picturePath
-
-    if [[ $? == 0 ]]; then
-        wl-copy -t image/png <$picturePath
-        notify-send "Screenshot (snip)" "Copied to clipboard and saved as $date$amount.png"
+    if ! [ -d "$dir" ]; then
+        mkdir -p "$dir"
     fi
-    ;;
-"Window")
-    mon=$(swaymsg -rt get_outputs | jq -r '.[] | select(.focused=true) | .name')
-    grim -o $mon $picturePath
 
-    if [[ $? == 0 ]]; then
-        notify-send "Screenshot (full)" "Saved as $date$amount.png"
+    if [ -f "$dir/$date.png" ]; then
+        fileNum="_$(find "$dir" -name "$date*.png" | wc -l)"
     fi
-    ;;
-esac
+    picturePath="$dir/$date$fileNum.png"
+
+    case "$type" in
+    "Snip")
+        if grim -g "$(slurp -b 000000BF -c FFFFFF80)" "$picturePath"; then
+            wl-copy -t image/png <"$picturePath"
+            notify-send "Screenshot (snip)" "Saved as $date$fileNum.png"
+        fi
+        ;;
+    "Monitor")
+        monitor=$(swaymsg -rt get_outputs | jq -r '.[] | select(.focused=true) | .name')
+
+        if grim -o "$monitor" "$picturePath"; then
+            notify-send "Screenshot (monitor)" "Saved as $date$fileNum.png"
+        fi
+        ;;
+    esac
+}
+main "$@"

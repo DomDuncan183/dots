@@ -28,20 +28,24 @@ Arch = "󰣇"
 
 [username]
 show_always = true
-format = '[ $user ]($style)'
+format = "[ $user ]($style)"
 style_user = "fg:black bg:blue"
 
 [hostname]
 ssh_only = false
-format = '[@$hostname ](fg:black bg:blue)'
+format = "[@$hostname ](fg:black bg:blue)"
 
 [directory]
 format = "[ $path ]($style)"
 style = "fg:black bg:green"
 
 [git_branch]
+format = "[ $symbol$branch ]($style)"
 style = "fg:black bg:purple"
-format = '[ $symbol$branch ]($style)'
+
+[git_commit]
+format = '[\($hash$tag\) ]($style)'
+style = "fg:black bg:purple"
 
 [git_status]
 format = '[\[$all_status$ahead_behind\]](fg:black bg:purple)'

@@ -1,9 +1,9 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 
-config.enable_wayland = false
+-- config.enable_wayland = false
 config.font = wezterm.font("Iosevka NF")
-config.font_size = 14
+config.font_size = 12
 
 config.hide_mouse_cursor_when_typing = true
 config.hide_tab_bar_if_only_one_tab = true

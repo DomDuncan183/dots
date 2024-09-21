@@ -23,7 +23,7 @@ background = "0x000000"
 foreground = "0xffffff"
 
 [font.normal]
-family = "NotoSansM NF"
+family = "Iosevka NF"
 style = "regular"
 
 [window]

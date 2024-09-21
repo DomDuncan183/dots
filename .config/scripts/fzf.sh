@@ -15,22 +15,20 @@ _fzf_comprun() {
     shift
 
     case "$command" in
-        cd) fzf --preview "eza --tree --color=always {} | head -200" "$@" ;;
-        export | unset) fzf --preview "eval 'echo \${}'" "$@" ;;
-        ssh) fzf --preview "dig {}" "$@" ;;
-        *) fzf --preview "$HOME/.config/scripts/preview.sh fzf {}" ;;
+    cd) fzf --preview "eza --tree --color=always {} | head -200" "$@" ;;
+    export | unset) fzf --preview "eval 'echo \${}'" "$@" ;;
+    ssh) fzf --preview "dig {}" "$@" ;;
+    *) fzf --preview "$HOME/.config/scripts/preview.sh fzf {}" ;;
     esac
 }
 
 frs() {
     rg="rg -. --line-number --with-filename --no-heading --color=always"
     echo "Recursively search directories for a regex pattern" | fzf --ansi \
-            --delimiter ":" \
-            --preview "$HOME/.config/scripts/preview.sh rg {1} {2}" \
-            --preview-window "+{2}+3/2" \
-            --bind "alt-enter:become(lf {1}),enter:become(nvim {1} +{2}),change:reload:$rg {q}"
+        --delimiter ":" \
+        --preview "$HOME/.config/scripts/preview.sh rg {1} {2}" \
+        --preview-window "+{2}+3/2" \
+        --bind "alt-enter:become(lf {1}),enter:become(nvim {1} +{2}),change:reload:$rg {q}"
 }
 
-pf() {
-    pacman -Slq | fzf --preview 'pacman -Si {}' --layout=reverse --bind 'enter:become(sudo pacman -S {}),alt-enter:accept'
-}
+pf() { pacman -Slq | fzf --preview 'pacman -Si {}' --layout=reverse --bind 'enter:become(doas pacman -S {}),alt-enter:accept'; }
