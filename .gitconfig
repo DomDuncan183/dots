@@ -1,9 +1,9 @@
 [init]
-	defaultBranch = main
+    defaultBranch = main
 
 [user]
-	email = domduncan183@gmail.com
-	name = Dominic Duncan
+    email = domduncan183@gmail.com
+    name = Dominic Duncan
 
 [core]
     pager = delta
