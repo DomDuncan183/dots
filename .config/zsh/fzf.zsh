@@ -1,5 +1,3 @@
-#!/bin/bash
-
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -23,7 +21,7 @@ _fzf_comprun() {
 }
 
 frs() {
-    rg="rg -. --line-number --with-filename --no-heading --color=always"
+    rg="rg -i -. --line-number --with-filename --no-heading --color=always"
     echo "Recursively search directories for a regex pattern" | fzf --ansi \
         --delimiter ":" \
         --preview "$HOME/.config/scripts/preview.sh rg {1} {2}" \
