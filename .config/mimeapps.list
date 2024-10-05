@@ -3,3 +3,7 @@ application/pdf=org.pwmt.zathura-pdf-mupdf.desktop
 image/png=org.gnome.eog.desktop
 image/jpg=org.gnome.eog.desktop
 image/jpeg=org.gnome.eog.desktop
+video/webm=mpv.desktop
+
+[Added Associations]
+video/webm=mpv.desktop;
