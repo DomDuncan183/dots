@@ -25,7 +25,7 @@ cmd on-cd &{{
 }}
 
 cmd fzf_jump ${{
-    res="$(fd --hidden --exclude .git . | fzf --preview "~/.config/scripts/preview.sh fzf {} 20 20")"
+    res="$(fd --hidden --exclude .git . | fzf --preview "$HOME/.config/scripts/preview.sh fzf {} 20 20")"
     if [ -n "$res" ]; then
         if [ -d "$res" ]; then
             cmd="cd"
@@ -37,12 +37,12 @@ cmd fzf_jump ${{
 }}
 
 cmd rg_search ${{
-    rg="rg -. --line-number --with-filename --no-heading --color=always"
+    rg="rg -i -. --line-number --with-filename --no-heading --color=always"
     res="$(
         $rg "" | \
         fzf --ansi \
             --delimiter ":" \
-            --preview "~/.config/scripts/preview.sh rg {1} {2}" \
+            --preview "$HOME/.config/scripts/preview.sh rg {1} {2}" \
             --preview-window "+{2}+3/2" \
             --bind "change:reload:$rg {q} || true" | \
         cut -d ":" -f1 \
