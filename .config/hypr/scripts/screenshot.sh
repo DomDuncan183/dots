@@ -1,31 +1,37 @@
-#!/usr/bin/bash
+#!/usr/bin/dash
 
-date=$(date +'%y-%m-%d')
-folder=$HOME/Pictures/Screenshots
-type="_$1"
+main() {
+    local date
+    local fileNum
+    local picturePath
 
-if ! [[ -d "$folder/$1/$date" ]]; then
-    mkdir "$folder/$1/$date"
-fi
+    local type=$1
+    local dir="$HOME/Pictures/Screenshots/$type"
+    date=$(date +'%y-%m-%d')
 
-if [[ -f "$folder/$1/$date/$date.png" ]]; then
-    fileNameList=("$screenshotDir/$1/$date*.png")
-    fileNum="_${#fileNameList[@]}"
-fi
-
-case "$1" in
-"snip")
-    grim -g "$(slurp "-b 000000BF -c ffffff80")" "$folder/$1/$date/$date$fileNum.png"
-
-    if wl-copy -t image/png <"$folder/$1/$date/$date$fileNum.png"; then
-        notify-send "Screenshot (snip)" "Copied to clipboard and saved as $date$fileNum.png"
+    if ! [ -d "$dir" ]; then
+        mkdir -p "$dir"
     fi
-    ;;
-"full")
-    mon=$(hyprctl -j activeworkspace | jq -r '.["monitor"]')
 
-    if grim -o "$mon" "$folder/$date$type$fileNum.png"; then
-        notify-send "Screenshot (full)" "Saved as $date$type$fileNum.png"
+    if [ -f "$dir/$date.png" ]; then
+        fileNum="_$(find "$dir" -name "$date*.png" | wc -l)"
     fi
-    ;;
-esac
+    picturePath="$dir/$date$fileNum.png"
+
+    case "$type" in
+    "Snip")
+        if grim -g "$(slurp -b 000000BF -c FFFFFF80)" "$picturePath"; then
+            wl-copy -t image/png <"$picturePath"
+            notify-send "Screenshot (snip)" "Saved as $date$fileNum.png"
+        fi
+        ;;
+    "Monitor")
+        monitor=$(hyprctl -j activeworkspace | jq -r '.["monitor"]')
+
+        if grim -o "$monitor" "$picturePath"; then
+            notify-send "Screenshot (monitor)" "Saved as $date$fileNum.png"
+        fi
+        ;;
+    esac
+}
+main "$@"
