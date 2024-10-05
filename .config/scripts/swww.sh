@@ -34,17 +34,18 @@ getIdx() {
 setPaper() {
     local type="grow"
     local fps="60"
-    # local bezier=".43,1.19,1,.4"
-    local bezier="1,.04,.58,.92"
-    local time="1"
+    local bezier="1,.02,.80,.25"
+    local time=1
     local pos="1.0,0"
+    local step=1
+
     swww img \
         --transition-type="$type" \
         --transition-pos="$pos" \
         --transition-bezier="$bezier" \
         --transition-fps="$fps" \
         --transition-duration="$time" \
-        --transition-step="200" \
+        --transition-step="$step" \
         "${FILES[$idx]}"
 }
 
@@ -53,8 +54,8 @@ main() {
     local idx
     local idxFile="$HOME/.cache/swww/idx"
 
-    if ! [[ -r idxFile ]]; then
-        echo 0 >idxFile
+    if ! [[ -r "$idxFile" ]]; then
+        echo 0 >"$idxFile"
     fi
 
     idx=$(getIdx "$idxFile" "$direction")
