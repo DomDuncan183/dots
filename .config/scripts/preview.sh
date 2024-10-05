@@ -38,10 +38,10 @@ checkExtension() {
     *)
         if [ "$program" = "rg" ]; then
             if [ -r "$file" ]; then
-                bat --color always "$file" --highlight-line "$line"
+                bat --theme Dracula --color always "$file" --highlight-line "$line"
             fi
         else
-            bat --color always "$file"
+            bat --theme Dracula --color always "$file"
         fi
         ;;
     esac

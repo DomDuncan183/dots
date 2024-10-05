@@ -7,8 +7,9 @@ include ~/.config/sway/binds
 # output * bg $wallpaper fill
 
 output eDP-1 resolution 2256x1504 scale 1 position 0,0
+# output DP-3 resolution 1920x1080@144hz scale 1 position 2256,0
 output DP-3 resolution 1920x1080@144hz scale 1 position 0,0
-# seat * hide_cursor 5000
+seat * hide_cursor 5000
 # seat * xcursor_theme Adwaita 16
 seat seat0 xcursor_theme Adwaita 16
 

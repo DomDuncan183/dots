@@ -10,7 +10,7 @@ getIdx() {
 
     local idx
     idx=$(cat "$1")
-    if ((idx > ${#FILES[@]})); then idx=0; fi
+    max=$((${#FILES[@]} - 1))
 
     case "$2" in
     next)
@@ -20,6 +20,14 @@ getIdx() {
         idx=$((idx - 1))
         ;;
     esac
+
+    if ((idx > max)); then
+        idx=0
+    fi
+    if ((idx < 0)); then
+        idx=$max
+    fi
+
     echo "$idx"
 }
 
@@ -44,6 +52,10 @@ main() {
     local direction=$1
     local idx
     local idxFile="$HOME/.cache/swww/idx"
+
+    if ! [[ -r idxFile ]]; then
+        echo 0 >idxFile
+    fi
 
     idx=$(getIdx "$idxFile" "$direction")
     setPaper "$idx"
