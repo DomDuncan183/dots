@@ -32,13 +32,15 @@ getIdx() {
 }
 
 setPaper() {
+    local file="${FILES[$idx]}"
+    local cache="$HOME/.cache/swww/current"
+
     local type="grow"
     local fps="60"
     local bezier="1,.02,.80,.25"
     local time=1
     local pos="1.0,0"
     local step=1
-
     swww img \
         --transition-type="$type" \
         --transition-pos="$pos" \
@@ -46,7 +48,9 @@ setPaper() {
         --transition-fps="$fps" \
         --transition-duration="$time" \
         --transition-step="$step" \
-        "${FILES[$idx]}"
+        "$file"
+
+    ln -sf "$file" "$cache"
 }
 
 main() {

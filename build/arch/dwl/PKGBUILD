@@ -1,0 +1,30 @@
+pkgname=dwl-git
+pkgver=r1162.9825c26
+pkgrel=1
+pkgdesc="dwm for wayland"
+arch=("x86_64")
+url="https://github.com/domduncan183/dwl"
+license=("GPL")
+depends=("wlroots")
+makedepends=('git' 'wayland-protocols')
+optdepends=('xorg-xwayland: for XWayland support')
+provides=("${pkgname%-VCS}")
+conflicts=("${pkgname%-VCS}")
+options=("!debug")
+source=("$pkgname"::"git+$url.git")
+sha256sums=("SKIP")
+
+pkgver() {
+    cd "$srcdir/${pkgname%-VCS}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+    cd "$srcdir/${pkgname%-VCS}"
+    make
+}
+
+package() {
+    cd "$srcdir/${pkgname%-VCS}"
+    install -Dm755 -t "$pkgdir/usr/bin" ./dwl
+}
