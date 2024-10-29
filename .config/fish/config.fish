@@ -15,6 +15,8 @@ if status is-interactive
     switch $TERM
         case xterm-kitty
             init_prompt
+        case screen-256color
+            init_prompt
     end
 
     source ~/.config/fish/alias.fish
