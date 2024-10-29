@@ -1,17 +1,12 @@
 * {
     font-family: NotoSans NFP;
-    font-size: 16px;
+    font-size: 12px;
     min-height: 0;
 }
 
 window#waybar {
-    /* background: #1c1c1c; */
-    /* color: #cccccc; */
-    /* border-radius: 0 0 10px 10px; */
-
     background: transparent;
     color: #cccccc;
-    /* border-radius: 0 0 10px 10px; */
 }
 
 #workspaces button {
@@ -26,12 +21,12 @@ window#waybar {
 }
 
 #workspaces button.persistent {
-    color: #525252;
+    color: #484a52;
     transition: all .2s ease-in-out;
 }
 
 #workspaces button.empty {
-    color: #262626;
+    color: #13141c;
 }
 
 #workspaces button:hover {
@@ -48,8 +43,7 @@ window#waybar {
 #clock,
 #window,
 #workspaces {
-    /* background: #363636; */
-    background: #1a1a1a;
+    background: #1a1b26;
     font-weight: 600;
     margin: 6px 0;
     padding: 0 10px;
@@ -65,7 +59,8 @@ window#waybar {
 }
 
 #pulseaudio.muted {
-    color: #000000; background: #b0b0b0;
+    color: #000000;
+    background: #cccccc;
 }
 
 #clock {
