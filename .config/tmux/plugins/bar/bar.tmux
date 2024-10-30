@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 cmd=()
 set() { cmd+=(set -gq "$1" "$2" ";"); }

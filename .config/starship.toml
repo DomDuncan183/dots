@@ -19,7 +19,7 @@ format = "[ $symbol ]($style)"
 style = "fg:black bg:cyan"
 
 [os.symbols]
-Arch = "󰣇"
+Macos = " "
 
 [username]
 show_always = true

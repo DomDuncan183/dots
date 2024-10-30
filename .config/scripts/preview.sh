@@ -1,4 +1,4 @@
-#!/usr/bin/dash
+#!/opt/homebrew/bin/dash
 
 drawKitty() {
     case "$1" in

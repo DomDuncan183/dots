@@ -1,3 +1,3 @@
 #!/bin/dash
 
-/home/dom/.config/scripts/preview.sh "lf" "$@"
+"$HOME/.config/scripts/preview.sh" "lf" "$@"

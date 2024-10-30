@@ -3,7 +3,6 @@ set relativenumber
 set ignorecase
 set icons
 set hidden
-set sixel
 
 set previewer ~/.config/lf/scripts/pv.sh
 set cleaner ~/.config/lf/scripts/cleaner.sh
@@ -12,7 +11,7 @@ cmd on-select &{{
     lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f")\""
 }}
 
-cmd trash %trash-put -- $fx
+cmd trash %trash -- $fx
 
 cmd on-cd &{{
     source /usr/share/git/completion/git-prompt.sh
@@ -59,5 +58,5 @@ map oh :trash
 map gs :rg_search
 map gc cd ~/.config
 map gr cd ~/.repos
-map gm cd /mnt
 map gd cd ~/Downloads
+map gm cd /mnt
