@@ -1,3 +1,9 @@
 .histfile
 .zcompdump
 .config/gtk-3.0/bookmarks
+build/arch/**/pkg/
+build/arch/**/src/
+build/arch/**/*.gz
+build/arch/**/*.zip
+build/arch/**/*.zst
+build/arch/**/*.xz
